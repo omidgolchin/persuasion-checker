@@ -1,0 +1,53 @@
+name: CI
+
+# Runs on GitHub's runners, free for public repos. The corpus itself is
+# never committed (research-use terms), so the model/split tests skip
+# there; everything else runs from committed fixtures.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: pip install -r requirements.txt
+      - run: pytest -q
+
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: node --check docs/app.js && node --check docs/persuasion.js && node --check docs/assist-config.js && node --check docs/tool-common.js && node --check scripts/eval_assist.js
+
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Score a shipped example pair end to end
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          sys.path.insert(0, "src")
+          from persuasion.score import prob_b_beats_a
+          ex = json.load(open("docs/data/examples.json"))[0]
+          p = prob_b_beats_a(ex["op"], ex["a"], ex["b"])
+          print("Draft B persuade probability:", round(p, 3))
+          assert abs(p - 0.843) < 0.01  # reference value for the default example
+          EOF
