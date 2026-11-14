@@ -1,0 +1,109 @@
+{
+  "split": {
+    "rule": "authors' conversation-level train flag; calibration = dev conversations with sha1(conv_id) % 5 == 0",
+    "fit_pairs": 2772,
+    "calibration_pairs": 684,
+    "test_pairs": 807
+  },
+  "weights": {
+    "log_words": 0.466363,
+    "op_overlap": -0.436541,
+    "op_coverage": 0.059822,
+    "you_rate": 0.043669,
+    "i_rate": 0.043111,
+    "question_rate": 0.018657,
+    "example_rate": 0.023446,
+    "number_rate": 0.068442,
+    "hedge_rate": 0.034825,
+    "link_count": 0.191226,
+    "agree_rate": -0.067411,
+    "mean_sent_len": 0.071783
+  },
+  "platt": {
+    "a": 0.9707378228313756,
+    "b": 0.0
+  },
+  "held_out": {
+    "pairs": 807,
+    "accuracy": 0.6555,
+    "ece": 0.035,
+    "reliability": [
+      {
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 6,
+        "mean_predicted": 0.0863,
+        "actual_rate": 0.1667
+      },
+      {
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 52,
+        "mean_predicted": 0.1605,
+        "actual_rate": 0.1923
+      },
+      {
+        "lo": 0.2,
+        "hi": 0.3,
+        "n": 80,
+        "mean_predicted": 0.2521,
+        "actual_rate": 0.3
+      },
+      {
+        "lo": 0.3,
+        "hi": 0.4,
+        "n": 124,
+        "mean_predicted": 0.3555,
+        "actual_rate": 0.3387
+      },
+      {
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 127,
+        "mean_predicted": 0.4508,
+        "actual_rate": 0.4409
+      },
+      {
+        "lo": 0.5,
+        "hi": 0.6,
+        "n": 150,
+        "mean_predicted": 0.5487,
+        "actual_rate": 0.6133
+      },
+      {
+        "lo": 0.6,
+        "hi": 0.7,
+        "n": 134,
+        "mean_predicted": 0.645,
+        "actual_rate": 0.6194
+      },
+      {
+        "lo": 0.7,
+        "hi": 0.8,
+        "n": 92,
+        "mean_predicted": 0.743,
+        "actual_rate": 0.7283
+      },
+      {
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 38,
+        "mean_predicted": 0.8358,
+        "actual_rate": 0.7368
+      },
+      {
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 4,
+        "mean_predicted": 0.9286,
+        "actual_rate": 0.75
+      }
+    ]
+  },
+  "descriptive": {
+    "longer_draft_won_share_test": 0.5973
+  },
+  "ood": {
+    "mean_abs_z_threshold_p95_dev": 1.086164261207703
+  }
+}

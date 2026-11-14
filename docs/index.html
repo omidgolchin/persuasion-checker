@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which Draft Persuades? Compare two arguments before you send one</title>
+<meta name="description" content="Paste two drafts of an argument and get a calibrated verdict on which is more likely to change a reader's mind, from a model trained on 4,263 real ChangeMyView argument pairs: what drives the difference, an equal-length score, and how far to trust it.">
+<script src="kit-theme.js"></script>
+<link rel="stylesheet" href="kit.css">
+<link rel="stylesheet" href="tool.css">
+<style>
+  .field textarea { width: 100%; min-height: 120px; font-family: inherit; font-size: var(--fs-small); line-height: 1.45; color: var(--fg); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; resize: vertical; }
+  .field textarea.tall { min-height: 170px; }
+  .wc { float: right; font-weight: normal; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <header class="kit-header">
+    <div class="kit-header-top">
+      <p class="kit-kicker">Omid Golchin · Decision tools</p>
+      <button type="button" class="kit-theme-toggle" aria-pressed="false">◐ Theme</button>
+    </div>
+    <h1>Which Draft Persuades?</h1>
+    <p class="kit-tagline">Two versions of an argument in; a calibrated verdict on which one is more likely to change the reader's mind, and what would make the weaker one stronger.</p>
+  </header>
+
+  <div class="work">
+    <form class="panel" id="f-main" novalidate onsubmit="return false">
+      <div class="panel-head">
+        <h2>Your drafts</h2>
+        <select class="example" id="example" aria-label="Load an example">
+          <option value="">Load example…</option>
+        </select>
+      </div>
+      <div class="fields">
+        <div class="field full"><label for="op">The view you are answering <span class="muted">(optional, but the score uses it)</span></label>
+          <textarea id="op" placeholder="Paste the original post or message your drafts reply to. Several features measure how a draft engages with these exact words, so the verdict is sharper with it."></textarea>
+        </div>
+        <div class="field full"><label for="draftA">Draft A <span class="wc" id="wcA"></span></label>
+          <textarea id="draftA" class="tall" placeholder="Paste the first version of your argument."></textarea>
+        </div>
+        <div class="field full"><label for="draftB">Draft B <span class="wc" id="wcB"></span></label>
+          <textarea id="draftB" class="tall" placeholder="Paste the second version."></textarea>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button type="button" id="assistToggle">✦ Suggest an edit</button>
+        <span class="footnote">An AI model rewrites the weaker draft (your key, or copy the prompt); the trained model does all the scoring.</span>
+      </div>
+      <div id="assistMount"></div>
+    </form>
+
+    <div>
+      <section class="panel verdict" id="verdict" aria-live="polite">
+        <p class="v-kicker">Verdict</p>
+        <p class="v-title" id="vTitle">…</p>
+        <p class="v-body" id="vBody"></p>
+        <div class="kpis" id="kpis"></div>
+        <div class="checks" id="checks" aria-label="Built-in checks"></div>
+      </section>
+      <div class="actions">
+        <button type="button" id="copySummary">Copy summary</button>
+        <button type="button" id="copyLink">Copy link</button>
+        <button type="button" id="undoEdit" hidden>Undo the edit</button>
+        <span class="toast" id="toast"></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote" id="exNote" hidden style="margin-top:10px"></p>
+
+  <section class="panel" style="margin-top:16px">
+    <h2>What drives the difference</h2>
+    <div class="svgchart" id="contribChart"></div>
+    <p class="chart-caption" id="contribCaption"></p>
+  </section>
+
+  <details class="more">
+    <summary>The full numbers <span class="sub">every feature, both drafts, the model's weights</span></summary>
+    <div class="more-body">
+      <div class="table-scroll"><table id="tFeatures"></table></div>
+      <p class="small" id="eqNote" style="margin-top:10px"></p>
+    </div>
+  </details>
+
+  <details class="more">
+    <summary>How the verdict is decided <span class="sub">the model, its training data, its calibration</span></summary>
+    <div class="more-body small">
+      <p><b>A paired model, because persuasion is relative.</b> The model never scores a draft on its own. It was trained on pairs of replies to the same ChangeMyView post where one reply changed the poster's mind (they awarded a delta) and the other did not, the design of Tan, Niculae, Danescu-Niculescu-Mizil &amp; Lee, <i>Winning Arguments</i> (WWW 2016). Comparing two answers to the same view controls the topic, which is what makes the comparison meaningful.</p>
+      <p><b>What it reads.</b> Twelve plain features per draft (length, how much it covers the poster's points, whether it argues in its own words or echoes theirs, direct address, questions, examples, numbers, hedging, links, acknowledgement, sentence length), listed with the learned weights in "The full numbers". A logistic regression on the difference between the two drafts' features gives a probability, recalibrated on held-out data (Platt scaling) so that "70%" means what it says as closely as the data allows.</p>
+      <p><b>Training and the frozen split.</b> 4,263 pairs from the authors' Winning Arguments corpus (r/ChangeMyView, 2013–2015), split by conversation using the corpus's own train/holdout flag: 2,772 pairs fitted the model, 684 calibrated it, and 807 were held out and touched once, for the numbers on this page. The plan was frozen before training (PLAN.md in the repository).</p>
+      <h3 style="margin-top:14px">Calibration on the held-out pairs</h3>
+      <div class="table-scroll"><table id="tReliability"></table></div>
+      <p style="margin-top:10px">Read it as: when the model puts a draft in the 70–80% band, that draft actually won about as often as the band says. Bands at the extremes hold few pairs, so they are noisier. Overall the predictions are off by about 4 points on average (expected calibration error 0.035).</p>
+      <p><b>Limits.</b> The model learned from one community's arguments, in 2013–2015, in one format (a written reply to a stated view). It reads surface features only: it cannot tell whether a claim is true, and a draft can game it. Treat the verdict as a second reader with known blind spots, not as a judge.</p>
+      <p class="footnote">The training write-up, weights and per-pair held-out predictions are in the repository's <a href="https://github.com/omidgolchin/persuasion-checker#research-notes">Research notes</a>.</p>
+    </div>
+  </details>
+
+  <footer class="kit-footer">
+    <p class="kit-siblings"><span class="kit-siblings-label">More tools:</span>
+      <a href="https://omidgolchin.github.io/bayesian-ab-lab/">A/B Test Decision Tool</a> ·
+      <a href="https://omidgolchin.github.io/queue-simulator/">Call Center Staffing Planner</a> ·
+      <a href="https://omidgolchin.github.io/experiment-hazard-simulator/">Agent Eval Planner</a></p>
+    <p>Built by Omid Golchin · <a href="https://github.com/omidgolchin/persuasion-checker">Code, tests and design decisions</a> · Everything runs in your browser; nothing you type is sent anywhere unless you use the AI edit with your own key.</p>
+  </footer>
+</main>
+<script src="persuasion.js"></script>
+<script src="model-data.js"></script>
+<script src="examples-data.js"></script>
+<script src="tool-common.js"></script>
+<script src="assist-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

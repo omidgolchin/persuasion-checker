@@ -1,0 +1,222 @@
+[
+ {
+  "id": "brief-01",
+  "text": "Original view:\nCMV: Tipping should be abolished and restaurants should just pay staff properly.\n\nDraft A:\nTipping is just how it works and servers would quit without it. Nobody forces you to tip a lot anyway. It has been this way forever.\n\nDraft B:\nYou say staff should be paid properly, and on that we agree. But in states that raised base wages while keeping tips, server income rose about 12% and turnover fell. For example, Seattle restaurants kept tipping and pay went up, not down.\n\nThe tool scored draft A at 37% and draft B at 63% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Covers the poster's points; Gives examples.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Covers the poster's points",
+    "Gives examples"
+   ]
+  }
+ },
+ {
+  "id": "brief-02",
+  "text": "Original view:\nCMV: Daylight saving time should be abolished.\n\nDraft A:\nYou mention the clock change, and twice a year it does cost sleep. Studies link the spring shift to a 6% rise in fatal car crashes that week. For example, Arizona dropped it decades ago and reports no downside. Would a permanent standard time really hurt?\n\nDraft B:\nDaylight saving is annoying and pointless. Everyone hates changing clocks. It should just stop.\n\nThe tool scored draft A at 85% and draft B at 15% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length; Gives examples.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length",
+    "Gives examples"
+   ]
+  }
+ },
+ {
+  "id": "brief-03",
+  "text": "Original view:\nCMV: College is a waste of money for most people.\n\nDraft A:\nCollege is a scam, degrees are worthless now, tons of dropouts are billionaires. Trade school is obviously better for everyone.\n\nDraft B:\nYour point about cost is real, and for some people a trade is better. But on average graduates earn about 65% more over a lifetime, and 8 of the 10 fastest growing jobs ask for a degree. Which part matters more to you, the debt or the odds?\n\nThe tool scored draft A at 25% and draft B at 75% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-04",
+  "text": "Original view:\nCMV: Social media should be banned for under 16s.\n\nDraft A:\nSocial media rots kids brains, it is obviously addictive and parents cannot control it. Ban it completely, problem solved.\n\nDraft B:\nYou worry about addiction, and the design is built for it. But a ban is hard to enforce: after Australia announced one, VPN downloads by teens rose 40% in a month. For example, age checks already fail on most platforms. What would make a ban work where checks have not?\n\nThe tool scored draft A at 22% and draft B at 78% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Gives examples.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Gives examples"
+   ]
+  }
+ },
+ {
+  "id": "brief-05",
+  "text": "Original view:\nCMV: Zoos should be shut down.\n\nDraft A:\nZoos are prisons for animals and that is clearly cruel. Nobody learns anything real from a cage. Close them all.\n\nDraft B:\nThe cruelty point matters, and old style cages deserved criticism. Modern zoos are different though: accredited zoos fund about 200 million dollars a year of field conservation, and species like the Arabian oryx exist only because of zoo breeding. Does that change the calculation?\n\nThe tool scored draft A at 29% and draft B at 71% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length"
+   ]
+  }
+ },
+ {
+  "id": "brief-06",
+  "text": "Original view:\nCMV: The voting age should be lowered to 16.\n\nDraft A:\nYou raise maturity, which is fair to ask about. Austria lowered the age in 2007 and 16 year olds turned out at higher rates than 18 to 21 year olds in their first elections. For example, in Takoma Park, Maryland, teen turnout beat the adult rate in local votes.\n\nDraft B:\nSixteen year olds are too immature to vote, their brains are not developed. They would just vote for memes.\n\nThe tool scored draft A at 76% and draft B at 24% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers; Covers the poster's points.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length",
+    "Uses numbers",
+    "Covers the poster's points"
+   ]
+  }
+ },
+ {
+  "id": "brief-07",
+  "text": "Original view:\nCMV: Homework should not exist in primary school.\n\nDraft A:\nHomework is pointless busywork for little kids, they should be playing outside instead. Teachers give it out of habit.\n\nDraft B:\nYou are right that worksheets for their own sake help nobody. But short practice is different: ten minutes of reading aloud a day is linked to noticeably faster progress by age 10, and Finland, often praised here, still assigns light homework. Is the problem homework itself or the amount?\n\nThe tool scored draft A at 38% and draft B at 62% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length"
+   ]
+  }
+ },
+ {
+  "id": "brief-08",
+  "text": "Original view:\nCMV: Electric cars are worse for the environment than people think.\n\nDraft A:\nEVs run on coal power and their batteries are toxic, so they are basically a scam. Gas cars are fine.\n\nDraft B:\nBattery mining is a fair concern, and the grid mix matters. Even so, lifecycle studies put an average EV at roughly half the emissions of a similar gas car after about 20,000 miles, and the gap widens as grids clean up. Which stage worries you most, mining or power?\n\nThe tool scored draft A at 25% and draft B at 75% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-09",
+  "text": "Original view:\nCMV: Remote work is worse for companies than office work.\n\nDraft A:\nCulture is the strongest part of your case, and junior staff do lose mentoring. The output data is less clear though: a Stanford study of 16,000 workers found a 13% rise in performance at home, mostly from fewer distractions. Have you seen output drop, or mostly connection?\n\nDraft B:\nRemote work kills culture and people slack off at home. Everyone knows the office is better.\n\nThe tool scored draft A at 86% and draft B at 14% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-10",
+  "text": "Original view:\nCMV: Space exploration is a waste of money.\n\nDraft A:\nSpace is a rich person hobby while people starve. The money should obviously be spent on Earth.\n\nDraft B:\nThe priorities argument is understandable. For scale, NASA is about 0.5% of the US budget, and its past work gave us water filtration and memory foam used in hospitals. Cutting it entirely would fund food programs for days, not years. Would a smaller budget change your mind?\n\nThe tool scored draft A at 19% and draft B at 81% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-11",
+  "text": "Original view:\nCMV: Video games make kids violent.\n\nDraft A:\nGames are full of killing so of course kids copy it. It is just common sense, look at the news.\n\nDraft B:\nIt is reasonable to worry when a game is graphic. The research is less settled than the news suggests: youth violence fell over the same 20 years that game sales tripled, and large studies find no clear link. For example, the APA urges caution about claiming one. What evidence would settle it for you?\n\nThe tool scored draft A at 18% and draft B at 82% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Gives examples.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Gives examples"
+   ]
+  }
+ },
+ {
+  "id": "brief-12",
+  "text": "Original view:\nCMV: Cats should be kept indoors at all times.\n\nDraft A:\nOutdoor cats kill birds and get run over, so keeping them in is a no brainer. Owners who let them out are irresponsible.\n\nDraft B:\nThe bird point is backed by data: outdoor cats kill an estimated 1.3 billion birds a year in the US. But a total indoor rule has costs too, like obesity and stress in high energy breeds. Would a leash or a catio answer your concern?\n\nThe tool scored draft A at 28% and draft B at 72% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-13",
+  "text": "Original view:\nCMV: Minimum wage raises just cause inflation and job losses.\n\nDraft A:\nThat is the textbook prediction, and it can happen in small towns with thin margins. The measured effects are smaller: a review of 138 state level raises found little job loss, and prices rose about 0.4% for a 10% raise. Does your view depend on the size of the raise?\n\nDraft B:\nBasic economics says raising wages raises prices and kills jobs. Every business owner knows this.\n\nThe tool scored draft A at 79% and draft B at 21% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-14",
+  "text": "Original view:\nCMV: Print books are better than e-books.\n\nDraft A:\nE-books feel soulless and screens tire your eyes. Real books are just better, end of story.\n\nDraft B:\nThe reading experience point is personal and fair. On comprehension the data is mixed but interesting: several studies find slightly better recall on paper for long texts, while e-readers win for travel and accessibility, like instant large print. Is it recall or the feel that decides it for you?\n\nThe tool scored draft A at 21% and draft B at 79% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length"
+   ]
+  }
+ },
+ {
+  "id": "brief-15",
+  "text": "Original view:\nCMV: The death penalty should be abolished everywhere.\n\nDraft A:\nThe death penalty is barbaric and the state should never kill people. It clearly does not deter anyone.\n\nDraft B:\nThe risk of error is the strongest argument here, and it is documented: 4% of people sentenced to death in the US were likely innocent by one careful estimate. On deterrence you are right that studies are inconclusive. Would life without parole answer the deterrence worry for you?\n\nThe tool scored draft A at 31% and draft B at 69% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length"
+   ]
+  }
+ },
+ {
+  "id": "brief-16",
+  "text": "Original view:\nCMV: University lectures should all be recorded.\n\nDraft A:\nAttendance is a real concern, and some lecturers do see drops. The gains are concrete though: students with jobs or disabilities rely on recordings, and one university found grades rose 5% for students who rewatched difficult lectures. Could recording only the hard weeks work?\n\nDraft B:\nRecording everything makes students lazy and kills attendance, professors hate it. Just show up.\n\nThe tool scored draft A at 74% and draft B at 26% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length; Covers the poster's points; Hedges.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length",
+    "Covers the poster's points",
+    "Hedges"
+   ]
+  }
+ },
+ {
+  "id": "brief-17",
+  "text": "Original view:\nCMV: Four day work weeks would hurt productivity.\n\nDraft A:\nWorking less obviously means producing less. Companies that try it are just doing PR.\n\nDraft B:\nIf hours were the whole story, I would agree. In the largest trial, 61 UK companies, revenue stayed flat while sick days fell 65%. For example, Microsoft Japan reported output up 40% in its trial month. Are you picturing the same hours squeezed, or genuinely fewer?\n\nThe tool scored draft A at 20% and draft B at 80% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers; Gives examples.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers",
+    "Gives examples"
+   ]
+  }
+ },
+ {
+  "id": "brief-18",
+  "text": "Original view:\nCMV: Fast food should be taxed like cigarettes.\n\nDraft A:\nFast food is poison and people cannot help themselves, tax it until nobody buys it.\n\nDraft B:\nThe health costs you cite are real. A tax hits unevenly though: Mexico's soda tax cut purchases about 7%, mostly in low income homes, which is both the point and the problem. Would you tax the sugar content rather than the restaurant?\n\nThe tool scored draft A at 20% and draft B at 80% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Uses numbers.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Uses numbers"
+   ]
+  }
+ },
+ {
+  "id": "brief-19",
+  "text": "Original view:\nCMV: Learning a second language is pointless now that AI translates everything.\n\nDraft A:\nFor travel and menus, you are right, the apps are excellent. They are weaker where it matters socially: job ads still pay a premium for bilingual staff, and studies link bilingualism to later onset of dementia symptoms by about 4 years. Is your claim about tourists or about careers?\n\nDraft B:\nTranslation apps do it all instantly, so language classes are a total waste of time in 2026.\n\nThe tool scored draft A at 58% and draft B at 42% likely to persuade. Weaker draft: B.\nFlagged features for the weaker draft to add or strengthen: Length.\nThe weaker draft also overdoes: Uses the poster's own words. Pull back on that.",
+  "expected": {
+   "weaker": "B",
+   "features_to_add": [
+    "Length"
+   ]
+  }
+ },
+ {
+  "id": "brief-20",
+  "text": "Original view:\nCMV: Pet ownership is selfish and should be discouraged.\n\nDraft A:\nPets are just status objects and breeding them is cruel. People should stop buying animals, period.\n\nDraft B:\nBreeding practices deserve the criticism, puppy mills especially. The broader claim is harder: shelter adoption is not purchase of a status object, and pet owners show lower rates of loneliness in several surveys. For example, guide dogs are hardly selfish. Where would you draw the line?\n\nThe tool scored draft A at 28% and draft B at 72% likely to persuade. Weaker draft: A.\nFlagged features for the weaker draft to add or strengthen: Length; Gives examples; Covers the poster's points.",
+  "expected": {
+   "weaker": "A",
+   "features_to_add": [
+    "Length",
+    "Gives examples",
+    "Covers the poster's points"
+   ]
+  }
+ }
+]

@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Which Draft Persuades? A paired-model comparison of two argument drafts"
+authors:
+  - family-names: "Golchin"
+    given-names: "Omid"
+license: MIT
+date-released: 2026-11-14
