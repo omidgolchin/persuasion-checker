@@ -22,7 +22,7 @@
       <button type="button" class="kit-theme-toggle" aria-pressed="false">◐ Theme</button>
     </div>
     <h1>Which Draft Persuades?</h1>
-    <p class="kit-tagline">Two versions of an argument in; a calibrated verdict on which one is more likely to change the reader's mind, and what would make the weaker one stronger.</p>
+    <p class="kit-tagline">Two versions of an argument in; a calibrated verdict on which one is more likely to change the reader's mind, and what would make the weaker one stronger. Built for replies in a debate or discussion (it learned from Reddit's ChangeMyView); it warns when a draft looks unlike that, such as marketing copy.</p>
   </header>
   <div class="guide" aria-label="How to use this tool">
     <ol class="steps">
@@ -54,7 +54,7 @@
       </div>
       <div class="actions" style="margin-top:12px">
         <button type="button" id="assistToggle">✦ Suggest an edit</button>
-        <span class="footnote">An AI model rewrites the weaker draft (your key, or copy the prompt); the trained model does all the scoring.</span>
+        <span class="footnote">Needs your own Anthropic or OpenAI-compatible API key, or copy the prompt into any AI assistant. The model only rewrites; the trained model does all the scoring.</span>
       </div>
       <div id="assistMount"></div>
     </form>
@@ -65,6 +65,7 @@
         <p class="v-title" id="vTitle">…</p>
         <p class="v-body" id="vBody"></p>
         <div class="kpis" id="kpis"></div>
+        <p class="small muted" id="kpiNote" style="margin:4px 0 0"></p>
         <div class="checks" id="checks" aria-label="Built-in checks"></div>
       </section>
       <div class="actions">
@@ -76,7 +77,7 @@
     </div>
   </div>
 
-  <p class="footnote" id="exNote" hidden style="margin-top:10px"></p>
+  <p class="footnote" id="exNote" hidden style="display:none"></p>
 
   <section class="panel" style="margin-top:16px">
     <h2>What drives the difference <button type="button" data-tip="drivers"></button></h2>

@@ -47,7 +47,10 @@
   if (state.op || state.a || state.b) setInputs(state.op, state.a, state.b);
   else if (EXAMPLES.length) { var e0 = EXAMPLES[0]; setInputs(e0.op, e0.a, e0.b); currentExample = 0; $("example").value = "0"; showNote(e0); }
 
-  function showNote(ex) { if (ex && ex.note) { $("exNote").textContent = ex.note; $("exNote").hidden = false; } else $("exNote").hidden = true; }
+  function showNote(ex) {
+    if (ex && ex.note) { $("exNote").textContent = ex.note; $("exNote").hidden = false; } else $("exNote").hidden = true;
+    Tool.exampleBanner($("f-main"), ex ? "<b>" + ex.label + "</b>. " + (ex.note ? ex.note + " " : "") + "Paste your own view and drafts over it." : null);
+  }
   $("example").addEventListener("change", function () {
     if (this.value === "") return;
     var ex = EXAMPLES[+this.value]; currentExample = +this.value;
@@ -59,7 +62,7 @@
   function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
   ["op", "draftA", "draftB"].forEach(function (id) {
     $(id).addEventListener("input", debounce(function () {
-      currentExample = null; $("example").value = ""; $("exNote").hidden = true;
+      currentExample = null; $("example").value = ""; showNote(null);
       if (editInfo && $(editInfo.which === "B" ? "draftB" : "draftA").value !== editInfo.text) editInfo = null;
       run();
     }, 250));
@@ -162,7 +165,7 @@
       $("vTitle").textContent = "Check the highlighted inputs";
       $("vBody").textContent = "Add both drafts (at least a few words each) and the tool will compare them.";
       $("verdict").className = "panel verdict v-neutral";
-      $("kpis").innerHTML = ""; $("checks").innerHTML = "";
+      $("kpis").innerHTML = ""; $("checks").innerHTML = ""; $("kpiNote").textContent = "";
       drawChart(null); renderTable(d); return;
     }
     renderVerdict(d); drawChart(d); renderTable(d);
@@ -201,6 +204,7 @@
     $("vBody").textContent = parts.join(" ");
 
     var pEqLead = W === "B" ? d.equalLength.pB : 1 - d.equalLength.pB;
+    $("kpiNote").textContent = "Read this as a signal, not a judgment: on " + "807 debates it never saw, the model picked the real winner " + F.pct(ACC, 1) + " of the time (a coin flip is 50%).";
     $("kpis").innerHTML = [
       [F.pct(p, 0), "chance draft " + W + " persuades", "prob"],
       [F.pct(pEqLead, 0), "at equal length", "eqlen"],
@@ -209,7 +213,7 @@
     ].map(function (x) { return '<div class="kpi"><span class="k-val">' + x[0] + '</span><span class="k-lbl">' + x[1] + (x[2] ? ' <button type="button" data-tip="' + x[2] + '"></button>' : "") + "</span></div>"; }).join("");
 
     var c = [];
-    c.push(["info", "HELD-OUT", "Model accuracy",
+    c.push(["info", "ACCURACY", "Model accuracy",
       "Right on " + F.pct(ACC, 1) + " of " + F.int(MODEL.held_out.pairs) + " held-out ChangeMyView pairs it never trained on. Chance is 50%: a real signal, not a judge."]);
     var bin = null;
     MODEL.held_out.reliability.forEach(function (b) { if (p >= b.lo && p < b.hi) bin = b; });
@@ -294,7 +298,7 @@
       });
     });
     host.appendChild(svg);
-    $("contribCaption").textContent = "Each bar is one feature's push on a draft's score (log-odds; longer pushes win, and the probability comes from the total). Only the eight features with the biggest difference between the drafts are shown.";
+    $("contribCaption").textContent = "Each bar is one feature's push on a draft's score (on the log-odds scale: +0.1 raises the odds of winning by about 10%; longer bars push harder, and the probability comes from the total). Only the eight features with the biggest difference between the drafts are shown.";
   }
 
   /* ---------- full numbers ---------- */
@@ -338,7 +342,7 @@
     eqlen: { t: "At equal length", d: "Longer replies win more often in the data, partly because they simply say more. This is the same verdict with length held equal, so you can see whether length alone is doing the work." },
     acc: { t: "Model accuracy", d: "How often the model picked the real winner on 807 pairs it never saw in training. 50% is a coin flip. Persuasion is hard to predict from text alone, so read the verdict as a signal, not a judgment." },
     ece: { t: "Calibration error", d: "Whether the probabilities can be taken at face value: when the model says 70%, does that draft win about 70% of the time? This is the average gap between stated and observed rates on held-out pairs (expected calibration error)." },
-    drivers: { t: "What drives the difference", d: "Each bar is one feature's push on a draft's score, on the log-odds scale: right helps, left hurts. Bars come from the trained weight × the draft's value for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
+    drivers: { t: "What drives the difference", d: "Each bar is one feature's push on a draft's score, on the log-odds scale: right helps, left hurts. Log-odds add up, so the bars sum to the score; a push of +0.1 multiplies the odds of winning by about 1.1 (10% better odds), +0.7 roughly doubles them. Bars come from the trained weight × the draft's value for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
   });
 
   run();
