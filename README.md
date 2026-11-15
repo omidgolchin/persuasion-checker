@@ -2,9 +2,9 @@
 
 For anyone choosing between two versions of an argument: paste the view you are answering and both drafts, and get a calibrated verdict on which draft is more likely to change the reader's mind, what drives the difference, and how far to trust the number, from a model trained on 4,263 real ChangeMyView argument pairs.
 
-![The tool cycling through its examples: a clear win, the pair where length does the work, and an out-of-domain pair that triggers the warning](docs/hero.gif)
+![The tool on three real pairs (a clear win, a win on length, too close to call) and the explanation of the model's accuracy](docs/hero.gif)
 
-![The tool on a desktop: two drafts in, a verdict that draft B is more likely to persuade, with the checks strip and the feature chart](docs/screenshots/desktop.png)
+![The tool on a desktop: the three-step guide, the two drafts with a hint under each, and the verdict](docs/screenshots/desktop.png)
 
 **Use it:** https://omidgolchin.github.io/persuasion-checker/ (runs in your browser; nothing you type is sent anywhere unless you use the AI edit with your own key)
 
@@ -15,6 +15,7 @@ For anyone choosing between two versions of an argument: paste the view you are 
 - **A domain warning.** Drafts far from the ChangeMyView arguments the model learned from (very short, marketing copy, legal boilerplate) get flagged instead of a confident number.
 - **Suggest an edit.** The tool composes a brief (both drafts, its scores, which draft is weaker and what it is missing); a language model, with your own key or by copy-pasting the prompt into any assistant, rewrites the weaker draft. The tool then re-scores the edit with the trained model. The language model never produces a score.
 - **Copy summary / Copy link.** A plain-text summary for a message or doc, and a link that reopens the tool with the same drafts.
+- **Help where you need it.** The page opens with three steps saying what to enter and what you get; every input has a line under it saying what the number is, why it matters and where to find it; and every technical term in the inputs and results has a **?** that opens a plain-language explanation.
 
 ## Built-in checks
 

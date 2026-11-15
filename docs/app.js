@@ -202,11 +202,11 @@
 
     var pEqLead = W === "B" ? d.equalLength.pB : 1 - d.equalLength.pB;
     $("kpis").innerHTML = [
-      [F.pct(p, 0), "chance draft " + W + " persuades"],
-      [F.pct(pEqLead, 0), "at equal length"],
-      [F.pct(ACC, 1), "model accuracy, held-out pairs"],
-      ["±" + Math.round(ECE * 100) + " pts", "average calibration error"]
-    ].map(function (x) { return '<div class="kpi"><span class="k-val">' + x[0] + '</span><span class="k-lbl">' + x[1] + "</span></div>"; }).join("");
+      [F.pct(p, 0), "chance draft " + W + " persuades", "prob"],
+      [F.pct(pEqLead, 0), "at equal length", "eqlen"],
+      [F.pct(ACC, 1), "model accuracy, held-out pairs", "acc"],
+      ["±" + Math.round(ECE * 100) + " pts", "average calibration error", "ece"]
+    ].map(function (x) { return '<div class="kpi"><span class="k-val">' + x[0] + '</span><span class="k-lbl">' + x[1] + (x[2] ? ' <button type="button" data-tip="' + x[2] + '"></button>' : "") + "</span></div>"; }).join("");
 
     var c = [];
     c.push(["info", "HELD-OUT", "Model accuracy",
@@ -332,6 +332,14 @@
   });
   window.addEventListener("resize", debounce(function () { if (last) drawChart(last); }, 200));
   if (window.KitTheme) KitTheme.onChange(function () { setTimeout(function () { if (last) drawChart(last); }, 0); });
+
+  Tool.explain({
+    prob: { t: "Chance this draft persuades", d: "The model's probability that this draft, rather than the other, is the one that changes the reader's mind. It comes from a logistic regression on the difference between the two drafts' features, trained on pairs of real replies to the same post where only one earned a 'view changed' award (Tan et al., 2016, ChangeMyView data)." },
+    eqlen: { t: "At equal length", d: "Longer replies win more often in the data, partly because they simply say more. This is the same verdict with length held equal, so you can see whether length alone is doing the work." },
+    acc: { t: "Model accuracy", d: "How often the model picked the real winner on 807 pairs it never saw in training. 50% is a coin flip. Persuasion is hard to predict from text alone, so read the verdict as a signal, not a judgment." },
+    ece: { t: "Calibration error", d: "Whether the probabilities can be taken at face value: when the model says 70%, does that draft win about 70% of the time? This is the average gap between stated and observed rates on held-out pairs (expected calibration error)." },
+    drivers: { t: "What drives the difference", d: "Each bar is one feature's push on a draft's score, on the log-odds scale: right helps, left hurts. Bars come from the trained weight × the draft's value for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
+  });
 
   run();
 })();
