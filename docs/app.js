@@ -213,9 +213,19 @@
       "Right on " + F.pct(ACC, 1) + " of " + F.int(MODEL.held_out.pairs) + " held-out ChangeMyView pairs it never trained on. Chance is 50%: a real signal, not a judge."]);
     var bin = null;
     MODEL.held_out.reliability.forEach(function (b) { if (p >= b.lo && p < b.hi) bin = b; });
-    if (bin) c.push([ECE <= 0.05 ? "ok" : "warn", "CALIBRATED", "Calibration",
-      "When the model scores a draft at " + F.pct(bin.lo, 0) + " to " + F.pct(bin.hi, 0) + ", the favored draft won " + F.pct(bin.actual_rate, 0) +
-      " of the time on held-out pairs (" + bin.n + " pairs). The number means roughly what it says."]);
+    if (bin) {
+      /* Wilson 95% interval for the band's observed win rate */
+      var wz = 1.96, wn = bin.n, wp = bin.actual_rate, wd = 1 + wz * wz / wn;
+      var wc = (wp + wz * wz / (2 * wn)) / wd, wh = wz * Math.sqrt(wp * (1 - wp) / wn + wz * wz / (4 * wn * wn)) / wd;
+      var wlo = Math.max(0, wc - wh), whi = Math.min(1, wc + wh);
+      var inside = bin.mean_predicted >= wlo && bin.mean_predicted <= whi;
+      var gapPts = Math.round((bin.mean_predicted - wp) * 100);
+      c.push([inside ? "ok" : "warn", inside ? "CALIBRATED" : "OVERCONFIDENT", "Calibration in this band",
+        "Drafts scored " + F.pct(bin.lo, 0) + " to " + F.pct(bin.hi, 0) + " (" + F.pct(bin.mean_predicted, 0) + " on average) won " + F.pct(wp, 0) +
+        " of " + wn + " held-out pairs (" + F.pct(wlo, 0) + " to " + F.pct(whi, 0) + " once sampling noise is allowed for, a 95% interval)." +
+        (inside ? (Math.abs(gapPts) >= 5 ? " The score sits inside that range, though " + Math.abs(gapPts) + " points " + (gapPts > 0 ? "above" : "below") + " the observed rate: read it as a little " + (gapPts > 0 ? "optimistic." : "cautious.") : " The score means about what it says.")
+          : " The score sits outside it: in this band the model runs " + Math.abs(gapPts) + " points " + (gapPts > 0 ? "too confident." : "too cautious."))]);
+    }
     var ratio = Math.max(d.wordsA, d.wordsB) / Math.max(1, Math.min(d.wordsA, d.wordsB));
     var longer = d.wordsB > d.wordsA ? "B" : "A";
     if (ratio >= 1.5) c.push(["warn", "LENGTH", "Length is doing real work",
@@ -249,7 +259,7 @@
     if (!d || d.state === "invalid") { $("contribCaption").textContent = "Add both drafts to see what drives the difference."; return; }
     var rows = d.contribs.slice().sort(function (x, y) { return Math.abs(y.diff) - Math.abs(x.diff); }).slice(0, 8);
     var NS = "http://www.w3.org/2000/svg";
-    var W = Math.max(300, host.clientWidth || 640), rowH = 42, top = 22;
+    var W = Math.max(300, host.clientWidth || 640), rowH = 52, top = 24;
     var H = top + rows.length * rowH + 8;
     var x0 = 6, x1 = W - 46, cx = (x0 + x1) / 2;
     var maxAbs = Math.max(0.1, Math.max.apply(null, rows.map(function (r) { return Math.max(Math.abs(r.contribA), Math.abs(r.contribB)); })));
@@ -268,17 +278,17 @@
     rows.forEach(function (r, i) {
       var y = top + i * rowH;
       var lt = el("text", { x: x0, y: y + 11, class: "title" }, svg); lt.textContent = r.label;
-      [["contribA", cA, y + 15], ["contribB", cB, y + 26]].forEach(function (cfg) {
+      [["contribA", cA, y + 17], ["contribB", cB, y + 32]].forEach(function (cfg) {
         var v = r[cfg[0]];
         if (Math.abs(v) < 0.005) return;
         var bx = Math.min(cx, X(v)), bw = Math.max(1.5, Math.abs(X(v) - cx));
-        el("rect", { x: bx, y: cfg[2], width: bw, height: 8, fill: cfg[1], rx: 1 }, svg);
+        el("rect", { x: bx, y: cfg[2], width: bw, height: 13, fill: cfg[1], rx: 1 }, svg);
         var label = (v > 0 ? "+" : "−") + Math.abs(v).toFixed(2);
         var vt;
         if (bw > 52) { /* wide bar: put the value inside its outer end */
-          vt = el("text", { x: v >= 0 ? X(v) - 4 : X(v) + 4, y: cfg[2] + 8, "text-anchor": v >= 0 ? "end" : "start", fill: "#fff" }, svg);
+          vt = el("text", { x: v >= 0 ? X(v) - 4 : X(v) + 4, y: cfg[2] + 10, "text-anchor": v >= 0 ? "end" : "start", style: "fill:#fff;font-weight:600" }, svg);
         } else {
-          vt = el("text", { x: v >= 0 ? X(v) + 4 : X(v) - 4, y: cfg[2] + 8, "text-anchor": v >= 0 ? "start" : "end" }, svg);
+          vt = el("text", { x: v >= 0 ? X(v) + 4 : X(v) - 4, y: cfg[2] + 10, "text-anchor": v >= 0 ? "start" : "end" }, svg);
         }
         vt.textContent = label;
       });
