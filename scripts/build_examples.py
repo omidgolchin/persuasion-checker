@@ -49,8 +49,8 @@ def mined(pid: str, label: str, note: str) -> dict:
 
 
 EXAMPLES = [
-    mined("p_3590", "A clear win (real pair)",
-          "A real held-out pair. Draft B is the reply that actually earned the poster's delta; draft A did not."),
+    mined("p_3801", "A clear win (real pair)",
+          "A real held-out pair, on whether self-driving cars will be on sale by 2040. Draft B is the reply that actually earned the poster's delta; draft A did not."),
     mined("p_3519", "Links and numbers (real pair)",
           "A real held-out pair. Draft B is the reply that actually earned the poster's delta; draft A did not."),
     mined("p_3478", "Winning on length (real pair)",

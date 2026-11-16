@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # Reference P(draft B persuades) for the shipped examples, recorded at
 # build time from the frozen model. Any drift beyond rounding fails.
 EXPECTED_PB = {
-    "p_3590": 0.843,
+    "p_3801": 0.781,
     "p_3519": 0.874,
     "p_3478": 0.635,
     "p_3491": 0.500,

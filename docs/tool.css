@@ -143,3 +143,43 @@ select.example { font-size: var(--fs-small); }
 .jump { display: none; }
 @media (max-width: 820px) { .jump { display: inline-flex; align-items: center; min-height: 44px; margin: 0 0 var(--sp-2); font-size: var(--fs-small); font-weight: 600; } }
 .ctl-grid .ctl-hint { display: block; margin-top: 4px; font-weight: 400; }
+
+/* ---- Which Draft Persuades?: comparison layout (structural variation) ----
+ * This tool's signature: the view being answered on top, the two drafts as
+ * the main area with the verdict as a banner between them, and the feature
+ * drivers as a diverging chart below. No work grid, no guide list; help is
+ * the "?" tips only. Brand drift (2): softer 10px corners on the comparison
+ * panels and banner; pill-ended bars in the drivers chart (drawn in app.js).
+ */
+.compare-head { margin-top: var(--sp-4); }
+.compare-head h2 { font-family: var(--font-body); font-size: var(--fs-h3); font-weight: 600; }
+
+.view-panel { border-radius: 10px; }
+.view-panel .field textarea { min-height: 96px; }
+
+.compare { display: grid; grid-template-columns: minmax(0, 1fr) 252px minmax(0, 1fr); gap: var(--sp-4); align-items: start; margin-top: var(--sp-4); }
+.draft-panel { border-radius: 10px; }
+.draft-panel .field textarea { min-height: 230px; }
+.draft-panel .field label { font-size: var(--fs-body); font-weight: 600; color: var(--fg); }
+
+.verdict.banner { border-left: none; border-top: 5px solid var(--neutral); border-radius: 10px; }
+.verdict.banner.v-good { border-top-color: var(--good); }
+.verdict.banner.v-bad { border-top-color: var(--bad); }
+.verdict.banner.v-accent { border-top-color: var(--accent); }
+.verdict.banner.v-neutral { border-top-color: var(--neutral); }
+.verdict.banner.v-warn { border-top-color: var(--series-2); }
+.banner .v-title { font-size: 1.45rem; }
+.banner .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.banner .checks { gap: var(--sp-3); }
+.banner .check { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+.drivers-panel { margin-top: var(--sp-4); }
+.drivers-panel h2 { font-family: var(--font-body); font-size: var(--fs-h3); font-weight: 600; margin: 0 0 var(--sp-3); }
+
+@media (max-width: 820px) {
+  .compare { grid-template-columns: minmax(0, 1fr); }
+  .compare #panelA { order: 1; }
+  .compare #panelB { order: 2; }
+  .compare .banner { order: 3; }
+  .draft-panel .field textarea { min-height: 170px; }
+}

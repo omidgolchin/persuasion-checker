@@ -165,7 +165,7 @@
     if (d.state === "invalid") {
       $("vTitle").textContent = "Check the highlighted inputs";
       $("vBody").textContent = "Add both drafts (at least a few words each) and the tool will compare them.";
-      $("verdict").className = "panel verdict v-neutral";
+      $("verdict").className = "panel verdict banner v-neutral";
       $("kpis").innerHTML = ""; $("checks").innerHTML = ""; $("kpiNote").textContent = "";
       drawChart(null); renderTable(d); return;
     }
@@ -179,7 +179,7 @@
     else if (d.state === "lean") { title = "Draft " + W + " leans ahead (" + F.pct(p, 0) + ")"; cls = "v-accent"; }
     else { title = "Too close to call (" + F.pct(p, 0) + " for draft " + W + ")"; cls = "v-accent"; }
     if (d.oodAny) cls = "v-warn";
-    $("verdict").className = "panel verdict " + cls;
+    $("verdict").className = "panel verdict banner " + cls;
     $("vTitle").textContent = title;
 
     var parts = [];
@@ -254,7 +254,7 @@
     last.title = title; last.body = $("vBody").textContent;
   }
 
-  /* ---------- chart: per-feature contributions, both drafts ---------- */
+  /* ---------- chart: diverging bars, each feature's net push ---------- */
   function cssVar(name, fallback) {
     var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     return v || fallback;
@@ -264,42 +264,40 @@
     if (!d || d.state === "invalid") { $("contribCaption").textContent = "Add both drafts to see what drives the difference."; return; }
     var rows = d.contribs.slice().sort(function (x, y) { return Math.abs(y.diff) - Math.abs(x.diff); }).slice(0, 8);
     var NS = "http://www.w3.org/2000/svg";
-    var W = Math.max(300, host.clientWidth || 640), rowH = 52, top = 24;
+    var W = Math.max(300, host.clientWidth || 640), rowH = 40, top = 26;
     var H = top + rows.length * rowH + 8;
     var x0 = 6, x1 = W - 46, cx = (x0 + x1) / 2;
-    var maxAbs = Math.max(0.1, Math.max.apply(null, rows.map(function (r) { return Math.max(Math.abs(r.contribA), Math.abs(r.contribB)); })));
+    var maxAbs = Math.max(0.1, Math.max.apply(null, rows.map(function (r) { return Math.abs(r.diff); })));
     var X = function (v) { return cx + v / maxAbs * ((x1 - x0) / 2); };
     var svg = document.createElementNS(NS, "svg");
     svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("role", "img");
-    svg.setAttribute("aria-label", "Feature contributions for each draft");
+    svg.setAttribute("aria-label", "Feature drivers: bars to the left push for draft A, bars to the right push for draft B");
     function el(name, attrs, parent) { var e = document.createElementNS(NS, name); Object.keys(attrs).forEach(function (k) { e.setAttribute(k, attrs[k]); }); (parent || svg).appendChild(e); return e; }
     var cA = cssVar("--series-2", "#b3541e"), cB = cssVar("--accent", "#0b5fa5"), muted = cssVar("--muted", "#777");
-    var lg = el("g", {}, svg);
-    el("rect", { x: x0, y: 2, width: 10, height: 10, fill: cA }, lg);
-    var t = el("text", { x: x0 + 14, y: 11 }, lg); t.textContent = "Draft A";
-    el("rect", { x: x0 + 76, y: 2, width: 10, height: 10, fill: cB }, lg);
-    t = el("text", { x: x0 + 90, y: 11 }, lg); t.textContent = "Draft B";
-    el("line", { x1: cx, x2: cx, y1: top - 4, y2: H - 4, stroke: muted, "stroke-width": 1 }, svg);
+    var la = el("text", { x: x0, y: 12 }, svg); la.textContent = "← pushes for A";
+    var lb = el("text", { x: x1, y: 12, "text-anchor": "end" }, svg); lb.textContent = "pushes for B →";
+    el("line", { x1: cx, x2: cx, y1: top - 6, y2: H - 4, stroke: muted, "stroke-width": 1 }, svg);
     rows.forEach(function (r, i) {
       var y = top + i * rowH;
       var lt = el("text", { x: x0, y: y + 11, class: "title" }, svg); lt.textContent = r.label;
-      [["contribA", cA, y + 17], ["contribB", cB, y + 32]].forEach(function (cfg) {
-        var v = r[cfg[0]];
-        if (Math.abs(v) < 0.005) return;
-        var bx = Math.min(cx, X(v)), bw = Math.max(1.5, Math.abs(X(v) - cx));
-        el("rect", { x: bx, y: cfg[2], width: bw, height: 13, fill: cfg[1], rx: 1 }, svg);
-        var label = (v > 0 ? "+" : "−") + Math.abs(v).toFixed(2);
-        var vt;
-        if (bw > 52) { /* wide bar: put the value inside its outer end */
-          vt = el("text", { x: v >= 0 ? X(v) - 4 : X(v) + 4, y: cfg[2] + 10, "text-anchor": v >= 0 ? "end" : "start", style: "fill:#fff;font-weight:600" }, svg);
-        } else {
-          vt = el("text", { x: v >= 0 ? X(v) + 4 : X(v) - 4, y: cfg[2] + 10, "text-anchor": v >= 0 ? "start" : "end" }, svg);
-        }
-        vt.textContent = label;
-      });
+      var v = r.diff;
+      if (Math.abs(v) < 0.005) {
+        var nt = el("text", { x: cx + 5, y: y + 27 }, svg); nt.textContent = "even";
+        return;
+      }
+      var bx = Math.min(cx, X(v)), bw = Math.max(2, Math.abs(X(v) - cx));
+      el("rect", { x: bx, y: y + 17, width: bw, height: 14, fill: v > 0 ? cB : cA, rx: 7 }, svg);
+      var label = (v > 0 ? "+" : "−") + Math.abs(v).toFixed(2);
+      var vt;
+      if (bw > 52) { /* wide bar: put the value inside its outer end */
+        vt = el("text", { x: v > 0 ? X(v) - 5 : X(v) + 5, y: y + 28, "text-anchor": v > 0 ? "end" : "start", style: "fill:#fff;font-weight:600" }, svg);
+      } else {
+        vt = el("text", { x: v > 0 ? X(v) + 5 : X(v) - 5, y: y + 28, "text-anchor": v > 0 ? "start" : "end" }, svg);
+      }
+      vt.textContent = label;
     });
     host.appendChild(svg);
-    $("contribCaption").textContent = "Each bar is one feature's push on a draft's score (on the log-odds scale: +0.1 raises the odds of winning by about 10%; longer bars push harder, and the probability comes from the total). Only the eight features with the biggest difference between the drafts are shown.";
+    $("contribCaption").textContent = "Each bar is one feature's net push on the gap between the drafts (on the log-odds scale: right favours draft B, left favours draft A; a push of +0.1 raises the favoured draft's odds of winning by about 10%, longer bars push harder, and the probability comes from the total of all twelve features). Only the eight features with the biggest difference between the drafts are shown.";
   }
 
   /* ---------- full numbers ---------- */
@@ -343,7 +341,7 @@
     eqlen: { t: "At equal length", d: "Longer replies win more often in the data, partly because they simply say more. This is the same verdict with length held equal, so you can see whether length alone is doing the work." },
     acc: { t: "Model accuracy", d: "How often the model picked the real winner on 807 pairs it never saw in training. 50% is a coin flip. Persuasion is hard to predict from text alone, so read the verdict as a signal, not a judgment." },
     ece: { t: "Calibration error", d: "Whether the probabilities can be taken at face value: when the model says 70%, does that draft win about 70% of the time? This is the average gap between stated and observed rates on held-out pairs (expected calibration error)." },
-    drivers: { t: "What drives the difference", d: "Each bar is one feature's push on a draft's score, on the log-odds scale: right helps, left hurts. Log-odds add up, so the bars sum to the score; a push of +0.1 multiplies the odds of winning by about 1.1 (10% better odds), +0.7 roughly doubles them. Bars come from the trained weight × the draft's value for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
+    drivers: { t: "What drives the difference", d: "Each bar is one feature's net push on the gap between the two drafts, on the log-odds scale: a bar to the right favours draft B, to the left draft A. Log-odds add up, so the bars sum to the gap between the drafts; a push of +0.1 multiplies the favoured draft's odds of winning by about 1.1 (10% better odds), +0.7 roughly doubles them. Each push is the trained weight × the difference between the drafts' values for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
   });
 
   run();

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # id -> (state, winner or None at a coin flip, P(B), out-of-domain?)
 EXPECTED = {
-    "p_3590": ("clear", "B", 0.843, False),
+    "p_3801": ("clear", "B", 0.781, False),
     "p_3519": ("clear", "B", 0.874, False),
     "p_3478": ("lean", "B", 0.635, False),
     "p_3491": ("close", None, 0.500, False),

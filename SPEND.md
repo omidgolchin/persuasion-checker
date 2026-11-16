@@ -11,3 +11,4 @@ Total: **$0**.
 - The persuasion study sketched in the README's Research notes (a
   TF-IDF baseline and an LLM judge on the same held-out pairs) has a
   separate $6 budget, untouched and out of scope for this build.
+- 2026-11-16: structural-variation restructure (comparison layout, verdict banner, diverging drivers chart) — local compute only, $0.00 API spend.

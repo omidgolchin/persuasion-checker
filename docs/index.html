@@ -24,43 +24,29 @@
     <h1>Which Draft Persuades?</h1>
     <p class="kit-tagline">Two versions of an argument in; a calibrated verdict on which one is more likely to change the reader's mind, and what would make the weaker one stronger. Built for replies in a debate or discussion (it learned from Reddit's ChangeMyView); it warns when a draft looks unlike that, such as marketing copy.</p>
   </header>
-  <div class="guide" aria-label="How to use this tool">
-    <ol class="steps">
-      <li><b>Paste the view you are answering</b> (optional) and two versions of your reply.</li>
-      <li><b>A model trained on real debates scores both</b> on what tends to change minds, such as echoing the other person's words.</li>
-      <li><b>Read the verdict</b>: which draft is more likely to persuade, how sure the model is, and what drives the difference.</li>
-    </ol>
-    <p class="also"><b>Also here:</b> <i>Suggest an edit</i> asks an AI model to rewrite the weaker draft, then scores the rewrite the same way · <i>Load an example</i> has real winning and losing replies · <i>How the verdict is decided</i> shows the model's accuracy on debates it never saw.</p>
-  </div>
 
-  <div class="work">
-    <form class="panel" id="f-main" novalidate onsubmit="return false">
-      <div class="panel-head">
-        <h2>Your drafts</h2>
-        <select class="example" id="example" aria-label="Load an example">
-          <option value="">Load example…</option>
-        </select>
-      </div>
-      <div class="fields">
-        <div class="field full"><label for="op">The view you are answering <span class="muted">(optional)</span></label>
-          <textarea id="op" placeholder="Paste the original post or message your drafts reply to. Several features measure how a draft engages with these exact words, so the verdict is sharper with it."></textarea>
-        <div class="hint">The post or message you are replying to. Several features compare your draft with these exact words, so the verdict is sharper with it.</div></div>
+  <form id="f-main" novalidate onsubmit="return false">
+    <div class="panel-head compare-head">
+      <h2>Your drafts</h2>
+      <select class="example" id="example" aria-label="Load an example">
+        <option value="">Load example…</option>
+      </select>
+    </div>
+
+    <section class="panel view-panel" aria-label="The view you are answering">
+      <div class="field full"><label for="op">The view you are answering <span class="muted">(optional)</span></label>
+        <textarea id="op" placeholder="Paste the original post or message your drafts reply to. Several features measure how a draft engages with these exact words, so the verdict is sharper with it."></textarea>
+      <div class="hint">The post or message you are replying to. Several features compare your draft with these exact words, so the verdict is sharper with it.</div></div>
+    </section>
+
+    <div class="compare">
+      <section class="panel draft-panel" id="panelA" aria-label="Draft A">
         <div class="field full"><label for="draftA">Draft A <span class="wc" id="wcA"></span></label>
           <textarea id="draftA" class="tall" placeholder="Paste the first version of your argument."></textarea>
         <div class="hint">One version of your reply. Plain text; quotes and line breaks are fine.</div></div>
-        <div class="field full"><label for="draftB">Draft B <span class="wc" id="wcB"></span></label>
-          <textarea id="draftB" class="tall" placeholder="Paste the second version."></textarea>
-        <div class="hint">The other version, answering the same view.</div></div>
-      </div>
-      <div class="actions" style="margin-top:12px">
-        <button type="button" id="assistToggle">✦ Suggest an edit</button>
-        <span class="footnote">Needs your own Anthropic or OpenAI-compatible API key, or copy the prompt into any AI assistant. The model only rewrites; the trained model does all the scoring.</span>
-      </div>
-      <div id="assistMount"></div>
-    </form>
+      </section>
 
-    <div>
-      <section class="panel verdict" id="verdict" aria-live="polite">
+      <section class="panel verdict banner" id="verdict" aria-live="polite" aria-label="Verdict">
         <p class="v-kicker">Verdict</p>
         <p class="v-title" id="vTitle">…</p>
         <p class="v-body" id="vBody"></p>
@@ -68,20 +54,31 @@
         <p class="small muted" id="kpiNote" style="margin:4px 0 0"></p>
         <div class="checks" id="checks" aria-label="Built-in checks"></div>
       </section>
-      <div class="actions">
-        <button type="button" id="copySummary">Copy summary</button>
-        <button type="button" id="copyLink">Copy link</button>
-        <button type="button" id="undoEdit" hidden>Undo the edit</button>
-        <span class="toast" id="toast"></span>
-      </div>
+
+      <section class="panel draft-panel" id="panelB" aria-label="Draft B">
+        <div class="field full"><label for="draftB">Draft B <span class="wc" id="wcB"></span></label>
+          <textarea id="draftB" class="tall" placeholder="Paste the second version."></textarea>
+        <div class="hint">The other version, answering the same view.</div></div>
+      </section>
     </div>
+  </form>
+
+  <div class="actions">
+    <button type="button" id="copySummary">Copy summary</button>
+    <button type="button" id="copyLink">Copy link</button>
+    <button type="button" id="undoEdit" hidden>Undo the edit</button>
+    <span class="toast" id="toast"></span>
   </div>
 
-
-  <section class="panel" style="margin-top:16px">
+  <section class="panel drivers-panel">
     <h2>What drives the difference <button type="button" data-tip="drivers"></button></h2>
     <div class="svgchart" id="contribChart"></div>
     <p class="chart-caption" id="contribCaption"></p>
+    <div class="actions" style="margin-top:12px">
+      <button type="button" id="assistToggle">✦ Suggest an edit</button>
+      <span class="footnote">Needs your own Anthropic or OpenAI-compatible API key, or copy the prompt into any AI assistant. The model only rewrites; the trained model does all the scoring.</span>
+    </div>
+    <div id="assistMount"></div>
   </section>
 
   <details class="more">
