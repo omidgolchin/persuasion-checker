@@ -15,6 +15,7 @@ For anyone choosing between two versions of an argument: paste the view you are 
 - **A domain warning.** Drafts far from the ChangeMyView arguments the model learned from (very short, marketing copy, legal boilerplate) get flagged instead of a confident number.
 - **Suggest an edit.** The tool composes a brief (both drafts, its scores, which draft is weaker and what it is missing); a language model, with your own key or by copy-pasting the prompt into any assistant, rewrites the weaker draft. The tool then re-scores the edit with the trained model. The language model never produces a score.
 - **Copy summary / Copy link.** A plain-text summary for a message or doc, and a link that reopens the tool with the same drafts.
+- **Start here.** The page opens with the question it answers and three steps; a list of common situations fills the drafts; and a section says when to use the tool and when not.
 - **Help where you need it.** Every draft box has a line under it saying what to paste there, and every technical term in the inputs and results has a **?** that opens a plain-language explanation.
 
 ## Built-in checks
@@ -49,6 +50,43 @@ The full log is in DECISIONS.md. The load-bearing ones:
 - **Length is the strongest single signal, and it is still weak.** The full model reaches 65.6% on held-out pairs. Twelve surface features separate winners from losers far less than I expected; most of persuasion is in the content, which this model cannot read.
 - **Acknowledgement is not argument.** "Good point"-style openers slightly predict losing once the other features are counted. They usually arrive with agreement rather than a counter-argument.
 - **Calibration survives.** After Platt scaling, predicted bands track actual win rates closely (ECE 0.035), including the honest middle: scores near 50% really are coin flips.
+
+## Common situations
+
+The form opens with "Start from a common situation". Each entry fills the form and says what it shows:
+
+| Situation | What it shows |
+|---|---|
+| A clear win (real pair) | A held-out pair where the model backs the draft that earned the delta. |
+| Links and numbers (real pair) | Links to evidence and numbers push for draft B, along with length. |
+| Winning on length (real pair) | Cut to equal length, the model flips: length did much of the work. |
+| Too close to call (real pair) | The model finds almost nothing between them. |
+| Two short replies (written for this demo) | Outside the training data: the tool warns. |
+| Marketing copy (written for this demo) | Not an argument: the verdict is a rough guess at best. |
+
+To add a situation, append an entry `{label, note, op, a, b}` to `docs/examples-data.js`; real pairs must come from the held-out set.
+
+## When to use it, and when not
+
+Use it to choose between two versions of a reply in a discussion or debate (answering someone's stated view, a review comment, a forum post or an op-ed rebuttal) and to see which surface features separate them.
+
+| It assumes | If yours differs |
+|---|---|
+| The reader is like a ChangeMyView poster: someone who stated a view and invited replies. | Readers who did not ask to be persuaded, or who decide for other reasons (a buyer, a grant panel), may respond differently. The domain check flags text far from the training data, but not every difference in audience. |
+| Both drafts answer the same view, and the score is relative. | It cannot say whether either draft is good, only which of the two leads. Two weak drafts still produce a winner. |
+| The model reads twelve surface features: length, links, numbers, questions, wording overlap with the view and similar. | It cannot read whether an argument is true, logical or kind. Most of persuasion is in the content, which this model does not see; treat the verdict as a tie-breaker. |
+| English replies of a few sentences to a few paragraphs. | Very short text, other languages and long documents fall outside the training data. |
+| Accuracy on held-out pairs (65.6%) carries over to your drafts. | Your drafts may differ from Reddit replies in ways the domain check cannot see, so the real accuracy can be lower. |
+
+Do not use it to judge marketing copy or ads (test them on real readers; the A/B Test Decision Tool reads the result), to fact-check a claim, to score a single draft on its own, or for decisions where being wrong a third of the time is too costly.
+
+## Where it comes from, and how it was generalised
+
+The tool is a trained model, and the study is the model. It follows Tan, Niculae, Danescu-Niculescu-Mizil and Lee (2016), *Winning Arguments*, who collected replies on Reddit's ChangeMyView, where a poster awards a "delta" to the reply that changed their mind. From that corpus, 4,263 pairs were built: two replies to the same post, one of which earned the delta.
+
+The plan was frozen before training (split, twelve interpretable features, a logistic model, the metrics). The model was then fitted on 2,772 pairs, its probabilities calibrated on 684 others, and tested once on 807 held-out pairs: right on 65.6%, with predicted bands tracking actual win rates (average error about 4 points). Length was the strongest single signal; replies that echoed the poster's exact words did worse.
+
+**How it was generalised.** The model scores any two drafts that answer the same view, not only Reddit replies. To keep that honest, the tool adds what the study did not need: a domain warning for text unlike the training data, an equal-length score so length alone cannot decide the verdict, and an optional AI edit whose result is re-scored by the same model. A comparison with a language-model judge is planned and not yet run.
 
 ## Research notes
 

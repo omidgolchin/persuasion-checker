@@ -3,6 +3,9 @@
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
+  function openDetails(id) { var d = document.getElementById(id); if (d && d.tagName === "DETAILS") { d.open = true; d.scrollIntoView({ block: "start" }); var su = d.querySelector("summary"); if (su) su.focus(); } }
+  document.querySelectorAll("a.open-details").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); openDetails(a.getAttribute("href").slice(1)); }); });
+  if (location.hash === "#fit" || location.hash === "#origin") openDetails(location.hash.slice(1));
   var F = Tool.fmt;
   var MODEL = window.PERSUADE_MODEL;
   var EXAMPLES = window.PERSUADE_EXAMPLES || [];

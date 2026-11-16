@@ -23,13 +23,21 @@
     </div>
     <h1>Which Draft Persuades?</h1>
     <p class="kit-tagline">Two versions of an argument in; a calibrated verdict on which one is more likely to change the reader's mind, and what would make the weaker one stronger. Built for replies in a debate or discussion (it learned from Reddit's ChangeMyView); it warns when a draft looks unlike that, such as marketing copy.</p>
+    <div class="start-here">
+      <p class="sh-q"><b>It answers:</b> which of two drafts answering the same view is more likely to change the reader's mind, what separates them, and how far to trust that number.</p>
+      <ol>
+        <li><b>Pick the situation closest to yours</b> in "Start from a common situation", or keep the real pair already filled in.</li>
+        <li><b>Paste your own text:</b> the view you are answering on top (optional, but the score uses it), then your two drafts side by side. The verdict updates as you type.</li>
+        <li><b>Read the verdict banner</b>, then what drives the difference and the checks under it. Before you rely on it, check <a href="#fit" class="open-details">when to use this tool, and when not</a>.</li>
+      </ol>
+    </div>
   </header>
 
   <form id="f-main" novalidate onsubmit="return false">
     <div class="panel-head compare-head">
       <h2>Your drafts</h2>
-      <select class="example" id="example" aria-label="Load an example">
-        <option value="">Load example…</option>
+      <select class="example" id="example" aria-label="Start from a common situation">
+        <option value="">Start from a common situation…</option>
       </select>
     </div>
 
@@ -100,6 +108,34 @@
       <p style="margin-top:10px">Read it as: when the model puts a draft in the 70–80% band, that draft actually won about as often as the band says. Bands at the extremes hold few pairs, so they are noisier. Overall the predictions are off by about 4 points on average (expected calibration error 0.035).</p>
       <p><b>Limits.</b> The model learned from one community's arguments, in 2013–2015, in one format (a written reply to a stated view). It reads surface features only: it cannot tell whether a claim is true, and a draft can game it. Treat the verdict as a second reader with known blind spots, not as a judge.</p>
       <p class="footnote">The training write-up, weights and per-pair held-out predictions are in the repository's <a href="https://github.com/omidgolchin/persuasion-checker#research-notes">Research notes</a>.</p>
+    </div>
+  </details>
+
+  <details class="more guide" id="fit">
+    <summary>When to use it, and when not <span class="sub">assumptions, limits, alternatives</span></summary>
+    <div class="more-body small">
+      <p><b>Use it</b> to choose between two versions of a reply in a discussion or debate (answering someone's stated view, a review comment, a forum post or an op-ed rebuttal) and to see which surface features separate them.</p>
+      <p><b>It assumes</b> the following. Each line says what happens to the answer when your case breaks the assumption.</p>
+      <table class="fit-table">
+        <thead><tr><th>Assumption</th><th>If yours differs</th></tr></thead>
+        <tbody>
+          <tr><td>The reader is like a ChangeMyView poster: someone who stated a view and invited replies.</td><td>Readers who did not ask to be persuaded, or who decide for other reasons (a buyer, a grant panel), may respond differently. The domain check flags text far from the training data, but not every difference in audience.</td></tr>
+          <tr><td>Both drafts answer the same view, and the score is relative.</td><td>It cannot say whether either draft is good, only which of the two leads. Two weak drafts still produce a winner.</td></tr>
+          <tr><td>The model reads twelve surface features: length, links, numbers, questions, wording overlap with the view and similar.</td><td>It cannot read whether an argument is true, logical or kind. Most of persuasion is in the content, which this model does not see; treat the verdict as a tie-breaker.</td></tr>
+          <tr><td>English replies of a few sentences to a few paragraphs.</td><td>Very short text, other languages and long documents fall outside the training data.</td></tr>
+          <tr><td>Accuracy on held-out pairs (65.6%) carries over to your drafts.</td><td>Your drafts may differ from Reddit replies in ways the domain check cannot see, so the real accuracy can be lower.</td></tr>
+        </tbody>
+      </table>
+      <p><b>Do not use it</b> to judge marketing copy or ads (test them on real readers; the A/B Test Decision Tool reads the result), to fact-check a claim, to score a single draft on its own, or for decisions where being wrong a third of the time is too costly.</p>
+    </div>
+  </details>
+
+  <details class="more guide" id="origin">
+    <summary>Where this tool comes from <span class="sub">the problem and data it was built on, and how it was generalised</span></summary>
+    <div class="more-body small">
+      <p>The tool is a trained model, and the study is the model. It follows Tan, Niculae, Danescu-Niculescu-Mizil and Lee (2016), <i>Winning Arguments</i>, who collected replies on Reddit's ChangeMyView, where a poster awards a "delta" to the reply that changed their mind. From that corpus, 4,263 pairs were built: two replies to the same post, one of which earned the delta.</p>
+      <p>The plan was frozen before training (split, twelve interpretable features, a logistic model, the metrics). The model was then fitted on 2,772 pairs, its probabilities calibrated on 684 others, and tested once on 807 held-out pairs: right on 65.6%, with predicted bands tracking actual win rates (average error about 4 points). Length was the strongest single signal; replies that echoed the poster's exact words did worse.</p>
+      <p><b>How it was generalised.</b> The model scores any two drafts that answer the same view, not only Reddit replies. To keep that honest, the tool adds what the study did not need: a domain warning for text unlike the training data, an equal-length score so length alone cannot decide the verdict, and an optional AI edit whose result is re-scored by the same model. A comparison with a language-model judge is planned and not yet run.</p>
     </div>
   </details>
 

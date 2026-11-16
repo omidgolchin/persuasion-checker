@@ -12,3 +12,4 @@ Total: **$0**.
   TF-IDF baseline and an LLM judge on the same held-out pairs) has a
   separate $6 budget, untouched and out of scope for this build.
 - 2026-11-16: structural-variation restructure (comparison layout, verdict banner, diverging drivers chart) — local compute only, $0.00 API spend.
+- 2026-11-16: guide sections (start here, situations, when to use, where it comes from) — $0.00 API spend; all work local.
