@@ -21,7 +21,7 @@ For anyone choosing between two versions of an argument: paste the view you are 
 
 | Check | What it tells you |
 |---|---|
-| Held-out accuracy | The model was right on 65.6% of 807 held-out pairs it never trained on. Chance is 50%: a real signal, stated so nobody over-trusts the verdict. |
+| Model accuracy | The model was right on 65.6% of 807 held-out pairs it never trained on. Chance is 50%: a real signal, stated so nobody over-trusts the verdict. |
 | Calibration in this band | The held-out reliability band your score falls in, with a 95% interval on its observed win rate: drafts scored 80–90% (84% on average) won 74% of 38 pairs, 58% to 85% once sampling noise is allowed for. A score inside the interval is reported as calibrated, with the gap named when it is 5 points or more; outside it, the check says the model is overconfident there. Average error across bands is about 4 points. |
 | Length | Whether the drafts' size difference is leaning the verdict, with the equal-length score quoted. |
 | Domain | Whether both drafts read like the arguments the model was trained on; flagged drafts get the warning in the verdict as well. |

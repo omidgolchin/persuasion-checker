@@ -7,7 +7,9 @@
   var MODEL = window.PERSUADE_MODEL;
   var EXAMPLES = window.PERSUADE_EXAMPLES || [];
   var engine = Persuasion.create(MODEL);
-  var ACC = MODEL.held_out.accuracy, ECE = MODEL.held_out.ece;
+  // accuracy is stored to 4 decimals; rebuild the exact share from the pair count
+  // so the page rounds it the same way as the README (529 of 807 = 65.6%)
+  var PAIRS = MODEL.held_out.pairs, ACC = Math.round(MODEL.held_out.accuracy * PAIRS) / PAIRS, ECE = MODEL.held_out.ece;
 
   /* What the model makes of each feature, in one line (matches the sign
    * of the fitted weight; see results/summary.md). */
@@ -48,7 +50,6 @@
   else if (EXAMPLES.length) { var e0 = EXAMPLES[0]; setInputs(e0.op, e0.a, e0.b); currentExample = 0; $("example").value = "0"; showNote(e0); }
 
   function showNote(ex) {
-    if (ex && ex.note) { $("exNote").textContent = ex.note; $("exNote").hidden = false; } else $("exNote").hidden = true;
     Tool.exampleBanner($("f-main"), ex ? "<b>" + ex.label + "</b>. " + (ex.note ? ex.note + " " : "") + "Paste your own view and drafts over it." : null);
   }
   $("example").addEventListener("change", function () {
@@ -204,7 +205,7 @@
     $("vBody").textContent = parts.join(" ");
 
     var pEqLead = W === "B" ? d.equalLength.pB : 1 - d.equalLength.pB;
-    $("kpiNote").textContent = "Read this as a signal, not a judgment: on " + "807 debates it never saw, the model picked the real winner " + F.pct(ACC, 1) + " of the time (a coin flip is 50%).";
+    $("kpiNote").textContent = "Read this as a signal, not a judgment: on " + F.int(PAIRS) + " debates it never saw, the model picked the real winner " + F.pct(ACC, 1) + " of the time (a coin flip is 50%).";
     $("kpis").innerHTML = [
       [F.pct(p, 0), "chance draft " + W + " persuades", "prob"],
       [F.pct(pEqLead, 0), "at equal length", "eqlen"],
