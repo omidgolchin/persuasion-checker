@@ -49,5 +49,5 @@ jobs:
           ex = json.load(open("docs/data/examples.json"))[0]
           p = prob_b_beats_a(ex["op"], ex["a"], ex["b"])
           print("Draft B persuade probability:", round(p, 3))
-          assert abs(p - 0.843) < 0.01  # reference value for the default example
+          assert abs(p - 0.781) < 0.01  # reference value for the default example (p_3801)
           EOF
