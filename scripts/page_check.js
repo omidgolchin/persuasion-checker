@@ -44,7 +44,10 @@ function findBrowser() {
 }
 
 function dumpDom(browser, url, extraArgs) {
-  return execFileSync(browser, ["--no-sandbox", "--disable-gpu", "--dump-dom"].concat(extraArgs || [], [url]),
+  /* --headless=new: a full Chrome/Chromium binary (what CI runners
+   * ship) exits 1 on --dump-dom without it when no display exists;
+   * the headless shell accepts it as a no-op. */
+  return execFileSync(browser, ["--no-sandbox", "--disable-gpu", "--headless=new", "--dump-dom"].concat(extraArgs || [], [url]),
     { encoding: "utf8", timeout: 90000, maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
 }
 
