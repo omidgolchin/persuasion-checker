@@ -126,3 +126,17 @@ PLAN.md and is not relitigated here.
     rendering changes previously shipped with no automated test; in
     CI the check fails rather than skips when no headless browser
     is available.
+
+## 2026-11-18: what a screen reader announces
+
+- Only the verdict title is announced. The whole verdict panel used to
+  be one `aria-live` region, and its KPI tiles and checks are rewritten
+  on every run, so a screen reader read them all again after each pause
+  in typing. Now the title alone carries `aria-live="polite"` and
+  `aria-atomic="true"`: a changed verdict is announced in full, and the
+  KPIs and checks stay on the page for the reader to move to. The title
+  is written only when its text changes, so an unchanged verdict is not
+  read out again. The "What the model rewards" line is its own live
+  region, still updated about 600 ms after typing stops; it is cleared
+  at once when the inputs become invalid, and it is not rewritten when
+  its text has not changed.

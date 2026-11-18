@@ -4,9 +4,11 @@
  * starting with the verdict's "What the model rewards" line (PC-2),
  * which must name the weaker draft for the current pair, follow the
  * pair when the drafts swap sides, hide when the pair cannot be
- * scored, and — because it sits inside the aria-live verdict — stay
- * put while the visitor types, updating only once typing has stopped
- * (the debounce section drives the real page in an iframe harness).
+ * scored, and — because it is a live region a screen reader announces
+ * — stay put while the visitor types, updating only once typing has
+ * stopped (the debounce section drives the real page in an iframe
+ * harness). It also checks that only the title and that line are live:
+ * the KPIs and checks must not be re-announced on every run.
  *
  * Needs a headless Chromium: set PAGE_CHECK_BROWSER to its path, or
  * have a Playwright-cache or system Chromium installed. With none
@@ -74,7 +76,7 @@ function main() {
   if (!browser) { console.log("SKIP: no headless Chromium found (set PAGE_CHECK_BROWSER)"); process.exit(3); }
   const ex = JSON.parse(fs.readFileSync(path.join(DOCS, "data", "examples.json"), "utf8"))[0];
   const q = (op, a, b) => "?op=" + encodeURIComponent(op) + "&a=" + encodeURIComponent(a) + "&b=" + encodeURIComponent(b);
-  const TITLE = /id="vTitle">([^<]*)/;
+  const TITLE = /id="vTitle"[^>]*>([^<]*)/;
   const MOVE = /id="vMove"[^>]*>([\s\S]*?)<\/p>/;
 
   // 1. The default pair (p_3801): Draft B leads at 78%, so the line must
@@ -86,6 +88,9 @@ function main() {
   check("default line names the weaker draft", mv.startsWith("What the model rewards: Draft A would score higher with"), mv.slice(0, 90));
   check("default line names the top lever", mv.includes("links to evidence"), mv.slice(0, 120));
   check("default line is visible", !/\bhidden\b/.test(moveTag(dom)));
+  const live = (dom.match(/<[a-z0-9]+ [^>]*aria-live="[^"]*"[^>]*>/g) || [])
+    .map((t) => (t.match(/id="([^"]*)"/) || [, "?"])[1]).sort().join(",");
+  check("only the title and the line are live regions", live === "vMove,vTitle", live);
 
   // 2. The same pair swapped: the score is antisymmetric (Draft A now
   //    leads at 78%) and the line must follow the pair and name Draft B.
@@ -101,13 +106,16 @@ function main() {
     text(dom, TITLE, "the verdict title"));
   check("invalid line hidden and empty", /\bhidden\b/.test(moveTag(dom)) && text(dom, MOVE, "the line") === "");
 
-  // 4. Typing must not recompute the line per keystroke: it sits in the
-  //    aria-live verdict, so it updates only after typing stops (the
+  // 4. Typing must not recompute the line per keystroke: it is a live
+  //    region, so it updates only after typing stops (the
   //    app's 250 ms input debounce, then the line's own 600 ms). The
   //    harness loads the real page in an iframe, swaps the drafts by
   //    firing input events, and snapshots the line synchronously, at
   //    450 ms (after the run, before the line's debounce) and at
-  //    1800 ms (after it). Virtual time makes the waits instant.
+  //    1800 ms (after it). Then it empties Draft B: the line must be
+  //    gone 450 ms later, without waiting out its own debounce, so a
+  //    stale line never sits under "Check the highlighted inputs".
+  //    Virtual time makes the waits instant.
   const harness = [
     "<!doctype html><meta charset=\"utf-8\"><body>",
     "<iframe id=\"f\" src=\"" + PAGE + "\" width=\"1200\" height=\"900\"></iframe>",
@@ -136,8 +144,14 @@ function main() {
     "    setTimeout(function () { out.mid = mv(); }, 450);",
     "    setTimeout(function () {",
     "      out.late = mv();",
-    "      out.stage = \"done\";",
-    "      document.getElementById(\"out\").textContent = \"RESULT \" + JSON.stringify(out);",
+    "      b.value = \"\";",
+    "      b.dispatchEvent(new w.Event(\"input\", { bubbles: true }));",
+    "      setTimeout(function () {",
+    "        out.cleared = mv();",
+    "        out.clearedHidden = d.getElementById(\"vMove\").hidden;",
+    "        out.stage = \"done\";",
+    "        document.getElementById(\"out\").textContent = \"RESULT \" + JSON.stringify(out);",
+    "      }, 450);",
     "    }, 1800);",
     "  }",
     "});",
@@ -156,6 +170,8 @@ function main() {
     check("typing does not update the line synchronously", r.sync === r.initial, (r.sync || "").slice(0, 60));
     check("line still unchanged after the run, before its debounce", r.mid === r.initial, (r.mid || "").slice(0, 60));
     check("line updates after typing stops", (r.late || "").startsWith("What the model rewards: Draft B would score higher with"), (r.late || "").slice(0, 90));
+    check("line clears at once when the inputs become invalid", r.cleared === "" && r.clearedHidden === true,
+      JSON.stringify({ cleared: (r.cleared || "").slice(0, 40), hidden: r.clearedHidden }));
   } finally {
     fs.rmSync(hdir, { recursive: true, force: true });
   }

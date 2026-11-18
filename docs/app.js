@@ -3,6 +3,10 @@
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
+  /* Live regions (the verdict title) are written only when their text
+   * changes, so a screen reader does not announce an unchanged verdict
+   * again after every pause in typing. */
+  var setLive = function (el, s) { s = String(s); if (el.textContent !== s) el.textContent = s; };
   function openDetails(id) { var d = document.getElementById(id); if (d && d.tagName === "DETAILS") { d.open = true; d.scrollIntoView({ block: "start" }); var su = d.querySelector("summary"); if (su) su.focus(); } }
   document.querySelectorAll("a.open-details").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); openDetails(a.getAttribute("href").slice(1)); }); });
   if (location.hash === "#fit" || location.hash === "#origin") openDetails(location.hash.slice(1));
@@ -144,16 +148,20 @@
     }
     return bits.join(" ");
   }
-  /* The line sits inside the aria-live verdict, so while the visitor is
+  /* The line is its own aria-live region, so while the visitor is
    * typing it is recomputed only once typing has stopped (600 ms after
    * the run), not on every keystroke's run; non-typing changes (page
-   * load, example swap, an applied edit, undo) update it at once. */
-  var moveTimer = null, pendingMove = null;
+   * load, example swap, an applied edit, undo) update it at once, and
+   * so does clearing it. An unchanged line is not rewritten, so it is
+   * not announced again. */
+  var moveTimer = null, pendingMove = null, shownMove = null;
   function applyMove() {
     moveTimer = null;
     if (pendingMove === null || !last) return;
     var mv = pendingMove; pendingMove = null;
     last.moveText = mv ? "What the model rewards: " + mv : "";
+    if (mv === shownMove) return;
+    shownMove = mv;
     $("vMove").innerHTML = mv ? "<b>What the model rewards:</b> " + mv : "";
     $("vMove").hidden = !mv;
   }
@@ -232,10 +240,10 @@
       pendingEdit = null;
     }
     if (d.state === "invalid") {
-      $("vTitle").textContent = "Check the highlighted inputs";
+      setLive($("vTitle"), "Check the highlighted inputs");
       $("vBody").textContent = "Add both drafts (at least a few words each) and the tool will compare them.";
       $("verdict").className = "panel verdict banner v-neutral";
-      setMove("", moveNow);
+      setMove("", true);
       $("kpis").innerHTML = ""; $("checks").innerHTML = ""; $("kpiNote").textContent = "";
       drawChart(null); renderTable(d); return;
     }
@@ -250,7 +258,7 @@
     else { title = "Too close to call (" + F.pct(p, 0) + " for draft " + W + ")"; cls = "v-accent"; }
     if (d.oodAny) cls = "v-warn";
     $("verdict").className = "panel verdict banner " + cls;
-    $("vTitle").textContent = title;
+    setLive($("vTitle"), title);
 
     var parts = [];
     if (d.oodAny) {

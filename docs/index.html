@@ -55,11 +55,11 @@
         <div class="hint">One version of your reply. Plain text; quotes and line breaks are fine.</div></div>
       </section>
 
-      <section class="panel verdict banner" id="verdict" aria-live="polite" aria-label="Verdict">
+      <section class="panel verdict banner" id="verdict" aria-label="Verdict">
         <p class="v-kicker">Verdict</p>
-        <p class="v-title" id="vTitle">…</p>
+        <p class="v-title" id="vTitle" aria-live="polite" aria-atomic="true">…</p>
         <p class="v-body" id="vBody"></p>
-        <p class="v-move" id="vMove" hidden></p>
+        <p class="v-move" id="vMove" aria-live="polite" hidden></p>
         <div class="kpis" id="kpis"></div>
         <p class="small muted" id="kpiNote" style="margin:4px 0 0"></p>
         <div class="checks" id="checks" aria-label="Built-in checks"></div>
