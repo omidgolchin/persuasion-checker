@@ -98,3 +98,31 @@ PLAN.md and is not relitigated here.
     only with a visitor's own key. The planned TF-IDF and LLM-judge
     comparison is recorded in the README's Research notes as future
     work with no results claimed; SPEND.md is $0.
+
+14. **The verdict shows the brief's gains line, without the assist.**
+    The "what the model rewards" guidance was previously computed only
+    inside the "Suggest an edit" brief, which sits behind a visitor's
+    API key, so most visitors never saw the most actionable part of
+    the verdict. The verdict now renders the same gainsFor()
+    computation (same 0.1 log-odds threshold, point 10) as a line of
+    its own: the weaker draft named, its largest "add or strengthen"
+    gap phrased as what the model scores higher ("Draft A would
+    score higher with links to evidence" — the features are
+    associations from ChangeMyView, so the wording is about the
+    model's scoring, not a promise about persuading), the top
+    feature's plain-language gloss attached, and an "overdoes" line
+    for the pull-back feature. It is guidance, not an edit: nothing is
+    rewritten, no key is involved, and no score changes — swapping
+    the drafts swaps the named draft, an applied edit re-derives the
+    line from the new pair like every other verdict element, and the
+    line hides when no feature clears the threshold or the pair
+    cannot be scored. The copied summary carries the line too, so
+    the surfaces agree. Because the line sits inside the aria-live
+    verdict, typing does not recompute it per keystroke: it updates
+    about 600 ms after typing stops, while page load, example swaps
+    and applied edits update it at once. A page-level check
+    (scripts/page_check.js, run by tests/test_page.py) renders the
+    page in a headless browser and asserts all of this, because
+    rendering changes previously shipped with no automated test; in
+    CI the check fails rather than skips when no headless browser
+    is available.

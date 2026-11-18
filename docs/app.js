@@ -60,7 +60,7 @@
     var ex = EXAMPLES[+this.value]; currentExample = +this.value;
     setInputs(ex.op, ex.a, ex.b); showNote(ex);
     document.querySelectorAll(".field.filled").forEach(function (f) { f.classList.remove("filled"); });
-    editInfo = null; run();
+    editInfo = null; run(true);
   });
 
   function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
@@ -93,12 +93,75 @@
     last.contribs.forEach(function (c) {
       var gain = c[wKey] - c[lKey];
       if (gain <= 0.1) return;
-      if (c.weight > 0 && rawL[c.key] < rawW[c.key]) add.push({ label: c.label, gain: gain });
-      else if (c.weight < 0 && rawL[c.key] > rawW[c.key]) pull.push({ label: c.label, gain: gain });
+      if (c.weight > 0 && rawL[c.key] < rawW[c.key]) add.push({ key: c.key, label: c.label, gain: gain });
+      else if (c.weight < 0 && rawL[c.key] > rawW[c.key]) pull.push({ key: c.key, label: c.label, gain: gain });
     });
     add.sort(function (x, y) { return y.gain - x.gain; });
     pull.sort(function (x, y) { return y.gain - x.gain; });
     return { add: add.slice(0, 3), pull: pull.slice(0, 1) };
+  }
+  /* The same gains as the assist brief, phrased as things a writer can do.
+   * ADD covers the positive-weight features (the only ones gainsFor puts in
+   * "add"); PULL the negative-weight ones (the only ones it puts in "pull"). */
+  var ADD_PHRASE = {
+    log_words: "a longer, more developed reply",
+    op_coverage: "covering more of the poster's own points",
+    you_rate: "speaking to the poster directly",
+    i_rate: "more first-person framing",
+    question_rate: "asking the poster questions",
+    example_rate: "giving concrete examples",
+    number_rate: "using numbers",
+    hedge_rate: "a little more hedging",
+    link_count: "links to evidence",
+    mean_sent_len: "somewhat longer sentences"
+  };
+  var PULL_PHRASE = {
+    op_overlap: "echoing the poster's exact words",
+    agree_rate: "acknowledgement that arrives instead of an argument"
+  };
+  function moveText(d) {
+    /* The verdict's guidance line: what the model rewards in the weaker
+     * draft, from the same gainsFor() computation the assist brief uses.
+     * Phrased as what the model scores higher, not as a promise about
+     * persuading: the features are associations from ChangeMyView.
+     * Guidance only: no key, no edit, and no score changes. Empty when no
+     * feature clears the brief's 0.1 log-odds threshold (DECISIONS #10). */
+    var g = gainsFor(d.winner);
+    if (!g.add.length && !g.pull.length) return "";
+    var weaker = d.winner === "B" ? "A" : "B";
+    var bits = [];
+    if (g.add.length) {
+      var top = g.add[0];
+      var s = "Draft " + weaker + " would score higher with " + (ADD_PHRASE[top.key] || top.label.toLowerCase());
+      if (g.add[1] && ADD_PHRASE[g.add[1].key]) s += "; next, " + ADD_PHRASE[g.add[1].key];
+      bits.push(s + ".");
+      if (GLOSS[top.key]) bits.push(GLOSS[top.key]);
+    }
+    if (g.pull.length) {
+      var p = g.pull[0], pp = PULL_PHRASE[p.key] || p.label.toLowerCase();
+      bits.push(g.add.length ? "It also overdoes " + pp + "."
+        : "Draft " + weaker + " would score higher by pulling back on " + pp + ".");
+    }
+    return bits.join(" ");
+  }
+  /* The line sits inside the aria-live verdict, so while the visitor is
+   * typing it is recomputed only once typing has stopped (600 ms after
+   * the run), not on every keystroke's run; non-typing changes (page
+   * load, example swap, an applied edit, undo) update it at once. */
+  var moveTimer = null, pendingMove = null;
+  function applyMove() {
+    moveTimer = null;
+    if (pendingMove === null || !last) return;
+    var mv = pendingMove; pendingMove = null;
+    last.moveText = mv ? "What the model rewards: " + mv : "";
+    $("vMove").innerHTML = mv ? "<b>What the model rewards:</b> " + mv : "";
+    $("vMove").hidden = !mv;
+  }
+  function setMove(mv, now) {
+    pendingMove = mv;
+    if (moveTimer) { clearTimeout(moveTimer); moveTimer = null; }
+    if (now) applyMove();
+    else moveTimer = setTimeout(applyMove, 600);
   }
   function composeBrief() {
     var op = $("op").value.trim(), a = $("draftA").value, b = $("draftB").value;
@@ -132,7 +195,7 @@
       $(id).value = edited;
       $(id).closest(".field").classList.add("filled");
       $("undoEdit").hidden = false;
-      run();
+      run(true);
     }
   }));
   $("assistToggle").addEventListener("click", function () {
@@ -144,11 +207,14 @@
     $(undoSnapshot.id).value = undoSnapshot.text;
     $(undoSnapshot.id).closest(".field").classList.remove("filled");
     undoSnapshot = null; editInfo = null; $("undoEdit").hidden = true;
-    run();
+    run(true);
   });
 
   /* ---------- main run ---------- */
-  function run() {
+  /* moveNow: update the "what the model rewards" line immediately
+   * (load, example swap, applied edit, undo). Typing runs leave it
+   * unset, so setMove debounces the line instead (see above). */
+  function run(moveNow) {
     var op = $("op").value, a = $("draftA").value, b = $("draftB").value;
     var total = op.length + a.length + b.length;
     if (total <= 1600) Tool.writeParams({ op: op, a: a, b: b });
@@ -169,13 +235,14 @@
       $("vTitle").textContent = "Check the highlighted inputs";
       $("vBody").textContent = "Add both drafts (at least a few words each) and the tool will compare them.";
       $("verdict").className = "panel verdict banner v-neutral";
+      setMove("", moveNow);
       $("kpis").innerHTML = ""; $("checks").innerHTML = ""; $("kpiNote").textContent = "";
       drawChart(null); renderTable(d); return;
     }
-    renderVerdict(d); drawChart(d); renderTable(d);
+    renderVerdict(d, moveNow); drawChart(d); renderTable(d);
   }
 
-  function renderVerdict(d) {
+  function renderVerdict(d, moveNow) {
     var W = d.winner, p = d.pLead;
     var title, cls;
     if (d.state === "clear") { title = "Draft " + W + " is more likely to persuade (" + F.pct(p, 0) + ")"; cls = "v-good"; }
@@ -206,6 +273,8 @@
       if (d.state === "lean") parts.push("A lean, not a lock: the model separates them, but narrowly.");
     }
     $("vBody").textContent = parts.join(" ");
+
+    setMove(moveText(d), moveNow);
 
     var pEqLead = W === "B" ? d.equalLength.pB : 1 - d.equalLength.pB;
     $("kpiNote").textContent = "Read this as a signal, not a judgment: on " + F.int(PAIRS) + " debates it never saw, the model picked the real winner " + F.pct(ACC, 1) + " of the time (a coin flip is 50%).";
@@ -330,7 +399,8 @@
   $("copyLink").addEventListener("click", function () { Tool.copy(location.href, $("toast"), "Link copied: it opens with these drafts."); });
   $("copySummary").addEventListener("click", function () {
     if (!last || last.state === "invalid") { $("toast").textContent = "Add both drafts first."; return; }
-    var lines = ["Which draft persuades? " + last.title, last.body, "",
+    var lines = ["Which draft persuades? " + last.title, last.body,
+      ...(last.moveText ? [last.moveText] : []), "",
       "Model: right on " + F.pct(ACC, 1) + " of " + F.int(MODEL.held_out.pairs) + " held-out ChangeMyView pairs (chance is 50%).",
       "Checks: " + (last.checksText || []).map(function (c) { return c[2]; }).join("; ") + ".", "",
       "Open with these drafts: " + location.href];
@@ -347,5 +417,5 @@
     drivers: { t: "What drives the difference", d: "Each bar is one feature's net push on the gap between the two drafts, on the log-odds scale: a bar to the right favours draft B, to the left draft A. Log-odds add up, so the bars sum to the gap between the drafts; a push of +0.1 multiplies the favoured draft's odds of winning by about 1.1 (10% better odds), +0.7 roughly doubles them. Each push is the trained weight × the difference between the drafts' values for that feature, so you can see which habits (echoing the original wording, hedging, long sentences) moved the verdict." }
   });
 
-  run();
+  run(true);
 })();

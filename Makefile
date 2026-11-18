@@ -8,7 +8,7 @@ test: venv
 	.venv/bin/python -m pytest -q
 
 js-check:
-	node --check docs/app.js && node --check docs/persuasion.js && node --check docs/assist-config.js && node --check docs/tool-common.js && node --check scripts/eval_assist.js
+	node --check docs/app.js && node --check docs/persuasion.js && node --check docs/assist-config.js && node --check docs/tool-common.js && node --check scripts/eval_assist.js && node --check scripts/page_check.js
 
 data:
 	.venv/bin/python scripts/download_data.py && .venv/bin/python -m src.persuasion.build_pairs

@@ -12,6 +12,7 @@
   .field textarea { width: 100%; min-height: 120px; font-family: inherit; font-size: var(--fs-small); line-height: 1.45; color: var(--fg); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; resize: vertical; }
   .field textarea.tall { min-height: 170px; }
   .wc { float: right; font-weight: normal; color: var(--muted); }
+  .v-move { margin: 10px 0 0; font-size: var(--fs-body); line-height: 1.55; color: var(--fg); }
 </style>
 </head>
 <body>
@@ -58,6 +59,7 @@
         <p class="v-kicker">Verdict</p>
         <p class="v-title" id="vTitle">…</p>
         <p class="v-body" id="vBody"></p>
+        <p class="v-move" id="vMove" hidden></p>
         <div class="kpis" id="kpis"></div>
         <p class="small muted" id="kpiNote" style="margin:4px 0 0"></p>
         <div class="checks" id="checks" aria-label="Built-in checks"></div>
